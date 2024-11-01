@@ -1,0 +1,93 @@
+CREATING A JAVA JAR FILE FROM .java FILES:
+
+Step 1: Convert .java file/s to .class by compiling the source
+javac src/com/filename.java
+
+This will generate "filename.class" file
+
+Step 2. Add manifest file to define the entry point to the jar
+
+Create file "mainfest.txt" and add below line
+
+Main-Class: com.ncsjava.filename
+
+Step 3. Create jar using above manifest file and the compiled class file
+
+jar cfm filename.jar mainfest.txt com/ncsjava/filename.class
+
+
+TO VIEW THE CONTENTS OF THE JAR FILE:
+
+It can be achieved in two ways:
+
+1) Rename the filename.jar to filename.zip
+and unzip using below command
+
+mv filename.jar filename.zip
+unzip filename.zip -d filename
+
+You can see the extracted files under folder named "filename"
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+$ unzip modifiyJar.zip -d modify
+Archive:  modifiyJar.zip
+   creating: modify/META-INF/
+  inflating: modify/META-INF/MANIFEST.MF
+  inflating: modify/com/ncsjava/modifiyJar.class
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+OR
+
+2) Run command jar tf filename.jar
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+$ jar tf modifiyJar.jar
+META-INF/
+META-INF/MANIFEST.MF
+com/ncsjava/modifiyJar.class
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATING JAR FROM MAVEN:
+
+Step 1. Update pom.xml with below content
+Note that maven automatically creat manifest file based on the contents defined in the pom.xml
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>${maven-jar-plugin.version}</version>
+    <configuration>
+        <archive>
+            <manifest>
+                <mainClass>com.ncsjava.filename</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Step 2. Run maven package to create the filename.jar
+Note: By default, our jar file will be added to the target folder in our project
+
+CREATING JAR USING SPRING BOOT:
+Step 1. If we’re using Spring Boot with Maven, we should first confirm that our packaging setting is set to jar rather than war in our pom.xml file.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+<modelVersion>4.0.0</modelVersion>
+<artifactId>spring-boot</artifactId>
+<packaging>jar</packaging>
+<name>spring-boot</name>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Step 2. Run command maven package
+maven package
+
+Step 3. Setting the Entry point
+
+Setting our main class is where we find differences between creating a jar with a regular Java application and a fat jar for a Spring Boot application. In a Spring Boot application, the main class is actually org.springframework.boot.loader.JarLauncher.
+
+Although our example isn’t a Spring Boot application, we could easily set it up to be a Spring Boot console application.
+
+Our main class should be specified as the start class:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+<properties>
+    <start-class>com.ncsjava.filename</start-class>
+    <!-- Other properties -->
+</properties>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
